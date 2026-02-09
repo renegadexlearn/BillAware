@@ -1,0 +1,83 @@
+/* CAROUSEL */
+.carousel-wrap{
+  position:relative;
+  width:430px;
+  max-width:95%;
+  margin:0 auto;
+  margin-top:20px;
+}
+.carousel{
+  width:100%;
+  overflow:hidden;
+  border-radius:6px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+.carousel img{
+  width:100%;
+  display:block;
+  transition:opacity .25s ease;
+}
+
+/* SIDE STACKED PHOTO CARDS */
+.carousel-wrap .stack {
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:85px;              /* side card width */
+  height:95%;              /* almost as tall as the main image */
+  background:#fff;
+  border-radius:6px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+  z-index:-1;
+}
+
+/* ==== LEFT SIDE STACKS ==== */
+.carousel-wrap .stack.l1 {
+  left:-55px;
+  rotate:-5deg;
+}
+.carousel-wrap .stack.l2 {
+  left:-35px;
+  rotate:-2deg;
+}
+
+/* ==== RIGHT SIDE STACKS ==== */
+.carousel-wrap .stack.r1 {
+  right:-55px;
+  rotate:5deg;
+}
+.carousel-wrap .stack.r2 {
+  right:-35px;
+  rotate:2deg;
+}
+
+/* HIDE STACKS ON MOBILE */
+@media (max-width: 768px) {
+  .carousel-wrap .stack {
+    display:none;
+  }
+}
+
+
+/* CIRCLE ARROWS */
+.nav-btn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:60px;height:60px;
+  border-radius:50%;
+  background:var(--blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border:0;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+.nav-btn.left{left:-34px;}
+.nav-btn.right{right:-34px;}
+.nav-btn span{
+  font-size:34px;
+  color:white;
+  font-weight:bold;
+}

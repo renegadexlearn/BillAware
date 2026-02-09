@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+{% set is_self = (current_user.id == item.id) %}
+{% set is_system_admin = item.is_system_admin() %}
+
+<div class="container" style="max-width: 800px; margin: 2rem auto;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Edit User</h3>
+    <a href="{{ url_for('users.index') }}" class="btn btn-sm btn-outline-secondary">← Back</a>
+  </div>
+
+  <form method="post" class="card card-body">
+    <div class="mb-2">
+      <label class="form-label">Email</label>
+      <input name="email" type="email" class="form-control form-control-sm"
+             value="{{ item.email }}" required>
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label">Full Name</label>
+      <input name="full_name" class="form-control form-control-sm"
+             value="{{ item.full_name or '' }}" required>
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label">Label Role</label>
+      <input name="role" class="form-control form-control-sm"
+             value="{{ item.role or '' }}"
+             {% if is_self or is_system_admin %}disabled{% endif %}
+             placeholder="e.g. owner / sys / encoder">
+      {% if is_self %}
+        <div class="text-muted small">You cannot change your own role label.</div>
+      {% elif is_system_admin %}
+        <div class="text-muted small">System admin role label is locked.</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Roles (model)</label>
+      <div class="d-flex flex-wrap gap-2">
+        {% for r in roles %}
+          <label class="form-check">
+            <input class="form-check-input"
+                   type="checkbox"
+                   name="role_ids"
+                   value="{{ r.id }}"
+                   {% if current_role_ids and r.id in current_role_ids %}checked{% endif %}
+                   {% if is_self or is_system_admin %}disabled{% endif %}>
+            <span class="form-check-label">{{ r.name }}</span>
+          </label>
+        {% endfor %}
+      </div>
+
+      {% if is_self %}
+        <div class="text-muted small mt-1">
+          You cannot change your own roles.
+        </div>
+      {% elif is_system_admin %}
+        <div class="text-muted small mt-1">
+          Roles for system admin accounts are locked.
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="form-check mb-3">
+      <input class="form-check-input"
+             type="checkbox"
+             name="active"
+             value="1"
+             id="active"
+             {% if item.active %}checked{% endif %}
+             {% if is_self or is_system_admin %}disabled{% endif %}>
+      <label class="form-check-label" for="active">
+        Active
+      </label>
+
+      {% if is_self %}
+        <div class="text-muted small">
+          You cannot deactivate your own account.
+        </div>
+      {% elif is_system_admin %}
+        <div class="text-muted small">
+          System admin accounts cannot be deactivated.
+        </div>
+      {% endif %}
+    </div>
+
+    <button class="btn btn-sm btn-primary">Save</button>
+  </form>
+</div>
+{% endblock %}

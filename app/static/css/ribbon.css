@@ -1,0 +1,59 @@
+.cat-ribbon{
+  width:100vw;
+  margin-left:50%;
+  transform:translateX(-50%);
+
+  padding:38px 0 42px;
+  position:relative;
+  z-index:2;
+
+  /*background: var(--qfleet-green);*/
+  /*background: linear-gradient(
+    90deg,
+    #171a20 0%,
+    #242a32 20%,
+    #343a42 50%,
+    #242a32 80%,
+    #171a20 100%
+  );*/
+
+/* satin / fabric sheen overlay */
+.cat-ribbon::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      45deg,
+      rgba(255,255,255,0.08) 0%,
+      rgba(255,255,255,0.0) 40%,
+      rgba(255,255,255,0.12) 100%
+    );
+  pointer-events:none;
+}
+
+.ribbon-inner{
+  max-width:900px;
+  margin:0 auto;
+  position:relative;
+  z-index:3;
+}
+
+/* =============================
+   RESPONSIVE CATEGORIES
+==============================*/
+
+.cats{
+  display:flex;
+  justify-content:center;   /* keep centered nicely */
+  flex-wrap:nowrap;           /* allow 2 rows if super narrow */
+  gap:10px;                 /* minimum spacing between bubbles */
+  padding:5px 15px;
+}
+
+/* Each category can shrink but keeps a sane minimum width */
+.cat{
+  text-align:center;
+  flex: 1 1 120px;          /* needs at least ~120px space */
+  max-width:150px;          /* prevents over-stretch on wider screens */
+}

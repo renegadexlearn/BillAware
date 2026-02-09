@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Role Permissions{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 2rem auto;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3 class="mb-0">Role Permissions</h3>
+      <div class="text-muted">Role: <strong>{{ role.name }}</strong></div>
+    </div>
+    <a href="{{ url_for('roles.index') }}" class="btn btn-sm btn-outline-secondary">Back</a>
+  </div>
+
+  <form method="post">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+          <p class="text-muted mb-0">
+            Tick the permissions this role should have.
+          </p>
+
+          <div class="btn-group btn-group-sm">
+            <button type="button" class="btn btn-outline-secondary" onclick="checkAll(true)">Select all</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="checkAll(false)">Clear</button>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <input type="text" id="permSearch" class="form-control form-control-sm"
+                 placeholder="Search permissions (e.g. vehicle., refuel., users_manage...)"
+                 oninput="filterPerms()">
+        </div>
+
+        <div class="row">
+          {% for p in permissions %}
+          <div class="col-md-6 mb-2 perm-item">
+            <div class="form-check">
+              <input class="form-check-input perm-checkbox"
+                     type="checkbox"
+                     name="permission_ids"
+                     value="{{ p.id }}"
+                     id="perm{{ p.id }}"
+                     {% if p.id in current_ids %}checked{% endif %}>
+              <label class="form-check-label" for="perm{{ p.id }}">
+                <div>
+                  <code>{{ p.name }}</code>
+                </div>
+                {% if p.description %}
+                  <div class="text-muted small">{{ p.description }}</div>
+                {% endif %}
+              </label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+
+      <div class="card-footer d-flex justify-content-end gap-2">
+        <a href="{{ url_for('roles.index') }}" class="btn btn-outline-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save Permissions</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  function checkAll(state) {
+    document.querySelectorAll(".perm-checkbox").forEach(cb => cb.checked = state);
+  }
+
+  function filterPerms() {
+    const q = (document.getElementById("permSearch").value || "").toLowerCase();
+    document.querySelectorAll(".perm-item").forEach(item => {
+      const text = item.innerText.toLowerCase();
+      item.style.display = text.includes(q) ? "" : "none";
+    });
+  }
+</script>
+{% endblock %}

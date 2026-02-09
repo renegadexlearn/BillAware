@@ -1,0 +1,83 @@
+/* =============================
+       SIMPLE FOOTER (NO JS)
+   =============================*/
+
+.site-footer{
+  background:var(--pink);
+  color:#fff;
+  margin-top:40px;
+  padding:20px 0;              /* always visible */
+  overflow:visible;            /* no clipping */
+  max-height:none;             /* remove collapse */
+  transition:none;             /* remove animations */
+  position:relative;
+  z-index:1;
+}
+
+.site-footer-inner{
+  max-width:1000px;
+  margin:0 auto;
+  padding:0 20px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.site-footer-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  font-size:14px;
+}
+
+.footer-logo{
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-size:14px;
+}
+
+.site-footer-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:24px;
+  font-size:13px;
+}
+
+.site-footer-links ul{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.site-footer-links li{
+  margin-bottom:4px;
+}
+
+.site-footer-links a{
+  color:#fff;
+  text-decoration:none;
+}
+
+.site-footer-links a:hover{
+  text-decoration:underline;
+}
+
+.footer-note{
+  font-size:11px;
+  line-height:1.4;
+  opacity:0.9;
+}
+
+.footer-social{
+  display:flex;
+  gap:10px;
+  font-size:20px;
+}
+
+.footer-bottom{
+  font-size:11px;
+  margin-top:4px;
+  opacity:0.8;
+}

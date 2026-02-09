@@ -1,0 +1,15 @@
+Flask
+python-dotenv
+pytz
+gunicorn
+
+Flask-Migrate
+Flask-SQLAlchemy
+PyMySQL
+
+pytest
+pytest-cov
+pytest-flask
+
+PyJWT
+cryptography

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Roles{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 2rem auto;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Roles</h3>
+
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('dashboard.index') }}"
+         class="btn btn-sm btn-outline-secondary">
+        ← Back to Dashboard
+      </a>
+
+      <a href="{{ url_for('roles.create') }}"
+         class="btn btn-sm btn-primary">
+        Add Role
+      </a>
+    </div>
+  </div>
+
+  <table class="table table-sm table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in roles %}
+      <tr>
+        <td>{{ r.name }}</td>
+        <td>{{ r.description or "-" }}</td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-secondary"
+             href="{{ url_for('roles.edit', role_id=r.id) }}">
+            Edit
+          </a>
+
+          {% if r.name == "system_admin" %}
+            <button class="btn btn-sm btn-outline-secondary" disabled
+                    title="system_admin role permissions are locked">
+              Permissions
+            </button>
+          {% else %}
+            <a class="btn btn-sm btn-outline-primary"
+               href="{{ url_for('roles.permissions', role_id=r.id) }}">
+              Permissions
+            </a>
+          {% endif %}
+
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

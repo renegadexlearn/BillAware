@@ -1,0 +1,100 @@
+.cb-menu {
+    background: #FFF8D6; /*#FFF8D6 yellow, #FFB4B4 pink*/
+    color: #fff;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    z-index: 9;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s ease;
+}
+
+.cb-menu.open {
+    max-height: 400px;
+}
+
+.cb-menu ul {
+    list-style: none;
+    padding: 45px 20px 15px;
+    margin: 0;
+}
+
+.cb-menu li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.4);
+}
+
+.cb-menu li:last-child {
+    border-bottom: none;
+}
+
+.cb-menu a {
+    color: #677784; /* #677784 slate gray, #fff white */
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+
+/* Desktop menu hidden on mobile */
+.desktop-menu {
+    display: none;
+}
+
+@media (min-width: 900px) {
+
+    .menu-toggle {
+        display: none; /* hide hamburger on desktop */
+    }
+
+    .cb-menu {
+        display: none !important; /* hide dropdown on desktop */
+    }
+
+    /* Align everything on the right */
+    .top-right-icons {
+        display: flex;
+        align-items: center;
+        gap: 28px; /* space between icons + menu */
+        margin-left: auto; /* pushes them right */
+        position: relative;
+        z-index: 12; /* always above stripes */
+    }
+
+    .search-icon {
+        stroke: #677784; /* slate gray */
+    }
+
+    
+
+    .desktop-menu {
+        display: flex;
+        gap: 12px; /* tighter spacing for chips */
+        align-items: center;
+        position: relative;
+        z-index: 4;
+    }
+
+    .desktop-menu a {
+        display: inline-block;
+        padding: 6px 14px;
+        background: var(--metal-light);
+        color: var(--metal-text);        /* slate gray text */
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        border-radius: 20px;   /* pill chip */
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.2s ease;
+    }
+
+    .desktop-menu a:hover {
+        background:var(--metal-dark);    /* soft rose */
+        color: white;
+        border-color: #FFB4B4;
+    }
+
+
+}

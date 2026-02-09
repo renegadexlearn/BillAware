@@ -1,0 +1,87 @@
+:root {
+  --pink:#ffb6d0;
+  --accent:#f7a8c3;
+  --cream:#fbf3f2;
+  --blue:#a7e5ff;
+  --muted:#6b5560;
+  --qfleet-green: #7ED321; /* matches the logo Q */
+  --qfleet-green-dark: #66B51E; /* hover / active */
+  --metal-light: #E6E8EA;
+  --metal-mid:   #C9CDD2;
+  --metal-dark:  #9FA6AD;
+  --metal-text:  #1A1D21;
+  --navbar-height: 50px;
+}
+
+@font-face {
+    font-family: "RomanceScript";
+    src: url("../fonts/Romance Font Script.ttf") format("truetype");
+    font-display: swap;
+}
+
+
+
+html, body {
+  margin:0;
+  /*background:var(--cream);*/
+  font-family:'Montserrat', sans-serif;
+}
+
+/*body {
+  background-color: var(--blue);
+}
+*/
+
+.page-main {
+  max-width:1000px;
+  margin:0 auto;
+  /*padding:20px 20px 0;*/
+  position:relative;
+  z-index:1;
+}
+
+
+.tagline {
+    font-family: "RomanceScript", cursive;
+    font-size: 4rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top:    0px;
+    margin-right:  0;
+    margin-bottom: 10px;
+    margin-left:   0;
+
+    color: #CA6C6C;
+    letter-spacing: 1px;
+}
+
+
+.flash-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 10px auto 0 auto;
+    padding: 0 15px;
+}
+
+.flash {
+    padding: 12px 18px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Categories */
+.flash-success { background: #d4edda; color: #155724; }
+.flash-error   { background: #f8d7da; color: #721c24; }
+.flash-warning { background: #fff3cd; color: #856404; }
+.flash-info    { background: #d1ecf1; color: #0c5460; }
+
+
+.top-left-logo a {
+    display: inline-block;
+}
+.brand-icon {
+    cursor: pointer;
+}

@@ -1,0 +1,24 @@
+/* centered-layout.css
+   Generic full-viewport centering utility
+*/
+
+.centered-shell{
+  box-sizing: border-box;
+  height: calc(100vh - var(--navbar-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+
+.centered-wrap{
+  width: 100%;
+  max-width: 420px;           /* sensible default for cards */
+}
+
+/* Optional enhancement when wrapping a card */
+.centered-card{
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+}

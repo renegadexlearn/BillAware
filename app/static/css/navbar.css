@@ -1,0 +1,62 @@
+.awning{
+  position: relative;
+  height: var(--navbar-height);
+  overflow: visible;
+  display:flex;
+  align-items:flex-start;
+  padding-top:8px;
+  box-sizing: border-box;
+  background-color: #2A2A2A;
+}
+
+.top-left-logo{
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: transparent;
+  width: auto;
+  height: auto;
+  padding: 0;
+  box-shadow: none;
+  overflow: visible;
+
+  z-index: 12; /* stays above stripes + scallops */
+}
+
+/* Round icon */
+.top-left-logo .brand-icon {
+  height: 34px;          /* control height only */
+  width: auto;           /* keep logo proportions */
+  border-radius: 6px;    /* slight rounding (optional) */
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  object-fit: contain;
+}
+
+
+/* TOP RIGHT ICONS */
+.top-right-icons{
+  margin-left:auto;
+  margin-right:20px;
+  z-index:12;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.top-right-icons svg{
+  width:36px;
+  height:36px;
+  opacity:0.9;
+  color:#333;
+}
+
+.top-right-icons svg.menu-toggle{
+  color: #677784;
+}
