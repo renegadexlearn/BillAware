@@ -78,6 +78,10 @@
     <pre id="rawToken">N/A</pre>
 </div>
 
+<button id="loginBtn" style="padding:10px 14px; cursor:pointer;">
+  Login via CommonAuth
+</button>
+
 <script>
 (function () {
     const originEl = document.getElementById("origin");
@@ -128,6 +132,13 @@
         jwtEl.textContent = "Token is not a valid JWT or could not be decoded.";
     }
 })();
+</script>
+
+<script>
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    const returnTo = encodeURIComponent(window.location.origin + "/auth/callback");
+    window.location.href = `https://auth.ianeer.com/auth?next=${returnTo}`;
+  });
 </script>
 
 </body>
