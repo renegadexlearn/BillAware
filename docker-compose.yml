@@ -27,7 +27,7 @@ services:
       # Host port comes from .env (APP_PORT)
       - "127.0.0.1:${APP_PORT}:8000"
     volumes:
-      - /var/secrets/jwt_public.pem:/var/secrets/jwt_public.pem:ro
+      - ${JWT_PUBLIC_KEY_FILE}:${JWT_PUBLIC_KEY_PATH}:ro
     restart: unless-stopped
 
 volumes:

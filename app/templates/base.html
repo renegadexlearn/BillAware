@@ -33,17 +33,20 @@
 
         <div class="top-left-logo">
             <a href="https://ianeer.com" aria-label="Go to ianeer.com">
-                <img class="brand-icon" src="{{ url_for('static', filename='images/logo-ianeer-small.png') }}" alt="Logo">
-            </a>    
+                <img
+                    class="brand-icon"
+                    src="{{ url_for('static', filename='images/logo-ianeer-small.png') }}"
+                    alt="Logo"
+                >
+            </a>
+            BILLAWARE
         </div>
 
-
         <div class="top-right-icons">
-
-            {% if current_user.is_authenticated %}
             <!-- DESKTOP MENU -->
             <nav class="desktop-menu">
                 <a href="/">Home</a>
+                <a href="#" id="btnLogout" class="text-danger" style="display:none;">Logout</a>
             </nav>
 
             <!-- Hamburger – mobile only -->
@@ -52,20 +55,20 @@
                 <line x1="4" y1="12" x2="20" y2="12"/>
                 <line x1="4" y1="18" x2="20" y2="18"/>
             </svg>
-            {% endif %}
         </div>
-
-
     </div>
 
-    {% if current_user.is_authenticated %}
     <!-- MOBILE SLIDE-DOWN MENU -->
     <nav class="cb-menu" id="cbMenu">
         <ul>
             <li><a href="/">Home</a></li>
+            <li>
+                <a href="#" id="btnLogoutMobile" class="text-danger" style="display:none;">
+                    Logout
+                </a>
+            </li>
         </ul>
     </nav>
-    {% endif %}
 
     <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -81,7 +84,6 @@
     {% endwith %}
     <!-- END FLASH MESSAGES -->
 
-
     <!-- MAIN CONTENT -->
     <main class="page-main">
         {% block content %}{% endblock %}
@@ -93,13 +95,52 @@
         const menuBtn = document.querySelector(".menu-toggle");
         const menuPanel = document.getElementById("cbMenu");
 
-        if (!menuBtn || !menuPanel) {
-            return; // menu not present on this page
+        if (menuBtn && menuPanel) {
+            menuBtn.addEventListener("click", () => {
+                menuPanel.classList.toggle("open");
+            });
+        }
+    });
+    </script>
+
+    <!-- LOGOUT + TOKEN CHECK -->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnLogout = document.getElementById("btnLogout");
+        const btnLogoutMobile = document.getElementById("btnLogoutMobile");
+
+        // Adjust if you standardize on one key
+        const token =
+            localStorage.getItem("access_token") ||
+            sessionStorage.getItem("access_token") ||
+            localStorage.getItem("token") ||
+            sessionStorage.getItem("token");
+
+        // Show logout buttons only when token exists
+        if (token) {
+            if (btnLogout) btnLogout.style.display = "";
+            if (btnLogoutMobile) btnLogoutMobile.style.display = "";
         }
 
-        menuBtn.addEventListener("click", () => {
-            menuPanel.classList.toggle("open");
-        });
+        function logout(e) {
+            if (e) e.preventDefault();
+
+            try {
+                localStorage.removeItem("access_token");
+                sessionStorage.removeItem("access_token");
+                localStorage.removeItem("token");
+                sessionStorage.removeItem("token");
+                localStorage.removeItem("me");
+                sessionStorage.removeItem("me");
+            } catch (err) {}
+
+            // Full logout: also clear CommonAuth session
+            const returnTo = encodeURIComponent(window.location.origin + "/");
+            window.location.href = `https://auth.ianeer.com/logout?next=${returnTo}`;
+        }
+
+        if (btnLogout) btnLogout.addEventListener("click", logout);
+        if (btnLogoutMobile) btnLogoutMobile.addEventListener("click", logout);
     });
     </script>
 

@@ -37,9 +37,12 @@ def create_app():
     from . import models  # app/models/__init__.py 
 
     from app.routes.api import bp as api_bp
+    from app.routes.api_auth import bp as api_auth_bp
     from app.routes.web import bp as web_bp
 
-    app.register_blueprint(web_bp)
     app.register_blueprint(api_bp)
+    app.register_blueprint(api_auth_bp)
+    app.register_blueprint(web_bp)
+
     
     return app

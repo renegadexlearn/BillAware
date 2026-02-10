@@ -1,11 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 
 bp = Blueprint("web", __name__)
 
 @bp.get("/")
-def home():
-    return """
-    <h1>BillAware</h1>
-    <p>Status: online</p>
-    <p>Try <code>/health</code> and <code>/api/me</code> (requires JWT).</p>
-    """
+def dashboard():
+    return render_template("dashboard/index.html")
