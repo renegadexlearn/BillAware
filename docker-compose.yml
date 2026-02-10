@@ -1,14 +1,14 @@
 services:
   db:
     image: mariadb:11
-    container_name: commonauth_db
+    container_name: billaware_db
     environment:
       MARIADB_DATABASE: ${DB_NAME}
       MARIADB_USER: ${DB_USER}
       MARIADB_PASSWORD: ${DB_PASSWORD}
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
-      - commonauth_db_data:/var/lib/mysql
+      - billaware_db_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -18,14 +18,17 @@ services:
 
   web:
     build: .
-    container_name: commonauth_web
+    container_name: billaware_web
     env_file: .env
     depends_on:
       db:
         condition: service_healthy
     ports:
-      - "127.0.0.1:8010:8000"
+      # Host port comes from .env (APP_PORT)
+      - "127.0.0.1:${APP_PORT}:8000"
+    volumes:
+      - /var/secrets/jwt_public.pem:/var/secrets/jwt_public.pem:ro
     restart: unless-stopped
 
 volumes:
-  commonauth_db_data:
+  billaware_db_data:

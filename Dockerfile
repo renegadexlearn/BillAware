@@ -7,7 +7,7 @@ WORKDIR /app
 
 # System deps:
 # - build-essential: for compiling some Python wheels if needed
-# - default-libmysqlclient-dev + pkg-config: for MySQL/MariaDB drivers (mysqlclient)
+# - pkg-config + default-libmysqlclient-dev: for MySQL/MariaDB drivers (mysqlclient) if you use it
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     pkg-config \
@@ -23,5 +23,6 @@ COPY . .
 # Container listens on 8000. Host port mapping is handled by docker-compose.
 EXPOSE 8000
 
-# Prefer a stable WSGI entrypoint: wsgi.py should define `app = create_app()`
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:8000", "wsgi:app"]
+# Flask app factory entrypoint (no wsgi.py required)
+# Ensure your project exposes: app/create_app()  (i.e., app:create_app())
+CMD sh -c 'gunicorn -w ${GUNICORN_WORKERS:-2} -b 0.0.0.0:8000 "app:create_app()"'
