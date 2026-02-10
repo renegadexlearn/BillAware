@@ -1,112 +1,134 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BillAware – Auth Debug</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-{% block title %}Dashboard · {{ APP_NAME }}{% endblock %}
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f6f7f9;
+            padding: 24px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 6px;
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+            box-shadow: 0 2px 6px rgba(0,0,0,.08);
+        }
+        h1 {
+            margin-top: 0;
+        }
+        pre {
+            background: #111;
+            color: #0f0;
+            padding: 12px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        .ok { color: #0a0; font-weight: bold; }
+        .bad { color: #c00; font-weight: bold; }
+        .row { margin-bottom: 12px; }
+        .label { font-weight: bold; }
+    </style>
+</head>
+<body>
 
-{% block content %}
-<!-- AUTH CHECK LOADING -->
-<div id="auth-loading" class="container py-5 text-center">
-    <div class="spinner-border text-secondary" role="status"></div>
-    <p class="mt-3 text-muted">Checking your session…</p>
-</div>
+<div class="card">
+    <h1>BillAware – Auth Debug Dashboard</h1>
 
-<!-- DASHBOARD CONTENT (hidden until auth passes) -->
-<div id="dashboard-content" class="container py-4" style="display:none;">
-    <h1 class="mb-4">Dashboard</h1>
-
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title text-muted">Status</h6>
-                    <p class="mb-0 text-success fw-semibold">Authenticated</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title text-muted">Role</h6>
-                    <p class="mb-0" id="user-roles">—</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title text-muted">Companies</h6>
-                    <p class="mb-0" id="user-companies">—</p>
-                </div>
-            </div>
-        </div>
+    <div class="row">
+        <span class="label">Origin:</span>
+        <span id="origin"></span>
     </div>
+
+    <div class="row">
+        <span class="label">Hostname:</span>
+        <span id="hostname"></span>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <span class="label">Token Status:</span>
+        <span id="tokenStatus"></span>
+    </div>
+
+    <div class="row">
+        <span class="label">Token Source:</span>
+        <span id="tokenSource"></span>
+    </div>
+
+    <div class="row">
+        <span class="label">Token Preview:</span>
+        <span id="tokenPreview"></span>
+    </div>
+
+    <hr>
+
+    <h3>Decoded JWT Payload (if applicable)</h3>
+    <pre id="jwtPayload">N/A</pre>
+
+    <hr>
+
+    <h3>Raw Token</h3>
+    <pre id="rawToken">N/A</pre>
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
-(async () => {
-    const AUTH_URL = "https://auth.ianeer.com/auth";
-    const returnTo = encodeURIComponent(window.location.origin + "/");
+(function () {
+    const originEl = document.getElementById("origin");
+    const hostEl = document.getElementById("hostname");
+    const statusEl = document.getElementById("tokenStatus");
+    const sourceEl = document.getElementById("tokenSource");
+    const previewEl = document.getElementById("tokenPreview");
+    const jwtEl = document.getElementById("jwtPayload");
+    const rawEl = document.getElementById("rawToken");
 
-    // Token lookup (keep consistent with your logout logic)
-    const token =
-        localStorage.getItem("access_token") ||
-        sessionStorage.getItem("access_token") ||
-        localStorage.getItem("token") ||
-        sessionStorage.getItem("token");
+    originEl.textContent = window.location.origin;
+    hostEl.textContent = window.location.hostname;
 
-    // No token → redirect immediately
+    let token = null;
+    let source = "none";
+
+    if (localStorage.getItem("access_token")) {
+        token = localStorage.getItem("access_token");
+        source = "localStorage.access_token";
+    } else if (sessionStorage.getItem("access_token")) {
+        token = sessionStorage.getItem("access_token");
+        source = "sessionStorage.access_token";
+    }
+
     if (!token) {
-        window.location.href = `${AUTH_URL}?next=${returnTo}`;
+        statusEl.innerHTML = "<span class='bad'>NO TOKEN FOUND</span>";
+        sourceEl.textContent = "-";
+        previewEl.textContent = "-";
         return;
     }
 
-    let res;
+    statusEl.innerHTML = "<span class='ok'>TOKEN FOUND</span>";
+    sourceEl.textContent = source;
+    previewEl.textContent =
+        token.substring(0, 15) + " ... " + token.substring(token.length - 15);
+
+    rawEl.textContent = token;
+
+    // Try decoding JWT payload
     try {
-        res = await fetch("/api/auth/status", {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        });
-    } catch (err) {
-        window.location.href = `${AUTH_URL}?next=${returnTo}`;
-        return;
+        const payload = token.split(".")[1];
+        if (!payload) throw new Error("Not a JWT");
+
+        const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+        const json = JSON.stringify(JSON.parse(decoded), null, 2);
+        jwtEl.textContent = json;
+    } catch (e) {
+        jwtEl.textContent = "Token is not a valid JWT or could not be decoded.";
     }
-
-    // Invalid / expired token
-    if (!res.ok) {
-        try {
-            localStorage.removeItem("access_token");
-            sessionStorage.removeItem("access_token");
-            localStorage.removeItem("token");
-            sessionStorage.removeItem("token");
-            localStorage.removeItem("me");
-            sessionStorage.removeItem("me");
-        } catch (e) {}
-
-        window.location.href = `${AUTH_URL}?next=${returnTo}`;
-        return;
-    }
-
-    // Auth OK
-    const data = await res.json();
-
-    // Populate UI
-    document.getElementById("user-roles").textContent =
-        (data.roles && data.roles.length)
-            ? data.roles.join(", ")
-            : "—";
-
-    document.getElementById("user-companies").textContent =
-        (data.companies && data.companies.length)
-            ? data.companies.join(", ")
-            : "All (system admin)";
-
-    // Reveal dashboard
-    document.getElementById("auth-loading").remove();
-    document.getElementById("dashboard-content").style.display = "";
 })();
 </script>
-{% endblock %}
+
+</body>
+</html>
