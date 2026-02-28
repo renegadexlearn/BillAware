@@ -3,6 +3,21 @@ import os
 from urllib.parse import quote_plus
 
 
+def apply_environment_profile():
+    profile = os.getenv("BILLAWARE_ENV", "dev").strip().lower() or "dev"
+    if profile not in {"dev", "demo", "live"}:
+        profile = "dev"
+    os.environ["BILLAWARE_ENV"] = profile
+
+    prefix = f"{profile.upper()}_"
+    for key, value in list(os.environ.items()):
+        if key.startswith(prefix):
+            os.environ[key[len(prefix) :]] = value
+
+
+apply_environment_profile()
+
+
 class BaseConfig:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -52,4 +67,5 @@ class ProductionConfig(BaseConfig):
 
 def get_config():
     env = os.environ.get("FLASK_ENV", "development").lower()
-    return ProductionConfig if env == "production" else DevelopmentConfig
+    profile = os.environ.get("BILLAWARE_ENV", "dev").lower()
+    return ProductionConfig if env == "production" or profile in {"demo", "live"} else DevelopmentConfig
