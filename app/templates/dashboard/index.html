@@ -40,20 +40,6 @@
         line-height: 1.65;
     }
 
-    .signin-row {
-        margin-top: 1rem;
-    }
-
-    .signin-btn {
-        border: 0;
-        border-radius: 10px;
-        padding: 0.7rem 1rem;
-        background: #111827;
-        color: #ffffff;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
     .actions-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -150,10 +136,6 @@
             Encode bills and receipts in one place, then allocate items or portions of items to the companies that actually own each purchase.
         </p>
 
-        <div class="signin-row">
-            <button id="loginBtn" class="signin-btn hidden" type="button">Sign in with CommonAuth</button>
-        </div>
-
         <div class="actions-grid">
             <a href="{{ url_for('web.encode_bills') }}" class="action-card">
                 <span class="action-label">Operations</span>
@@ -187,7 +169,6 @@
 (function () {
     const callbackPath = {{ AUTH_CALLBACK_PATH|tojson }};
     const loginUrl = {{ AUTH_LOGIN_URL|tojson }};
-    const loginBtn = document.getElementById("loginBtn");
     const debugPanel = document.getElementById("debugPanel");
     const backendPayload = document.getElementById("backendPayload");
 
@@ -236,7 +217,8 @@
         const token = getStoredToken();
 
         if (!token) {
-            loginBtn.classList.remove("hidden");
+            const returnTo = encodeURIComponent(window.location.origin + callbackPath);
+            window.location.replace(`${loginUrl}?next=${returnTo}`);
             return;
         }
 
@@ -250,11 +232,6 @@
 
         await verifyBackend(token);
     }
-
-    loginBtn.addEventListener("click", function () {
-        const returnTo = encodeURIComponent(window.location.origin + callbackPath);
-        window.location.href = `${loginUrl}?next=${returnTo}`;
-    });
 
     hydrateHome();
 })();
