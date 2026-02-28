@@ -25,6 +25,12 @@ class BaseConfig:
     JWT_AUDIENCE = os.getenv("JWT_AUDIENCE", "billaware")
     JWT_PUBLIC_KEY_PATH = os.getenv("JWT_PUBLIC_KEY_PATH", "./jwt_public.pem")
 
+    # ---- AUTH ----
+    AUTH_BASE_URL = os.getenv("AUTH_BASE_URL", "https://auth.ianeer.com").rstrip("/")
+    AUTH_LOGIN_URL = os.getenv("AUTH_LOGIN_URL", f"{AUTH_BASE_URL}/auth")
+    AUTH_LOGOUT_URL = os.getenv("AUTH_LOGOUT_URL", f"{AUTH_BASE_URL}/auth/logout")
+    APP_BASE_URL = os.getenv("APP_BASE_URL", "")
+    AUTH_CALLBACK_PATH = os.getenv("AUTH_CALLBACK_PATH", "/auth/callback")
 
     # ---- APP NAME ----
     APP_NAME = os.environ.get("APP_NAME", "App")

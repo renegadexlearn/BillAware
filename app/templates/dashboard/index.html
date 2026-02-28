@@ -1,145 +1,262 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>BillAware – Auth Debug</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
 
-    <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #f6f7f9;
-            padding: 24px;
+{% block title %}{{ APP_NAME }}{% endblock %}
+
+{% block styles %}
+<style>
+    .home-shell {
+        padding: 1.25rem 1rem 2rem;
+    }
+
+    .home-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 1.5rem;
+        background: #ffffff;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .home-title {
+        margin: 0;
+        font-size: 2rem;
+        line-height: 1.1;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .home-slogan {
+        margin: 0.35rem 0 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #6b7280;
+    }
+
+    .home-copy {
+        max-width: 52rem;
+        margin: 0.9rem 0 0;
+        color: #4b5563;
+        line-height: 1.65;
+    }
+
+    .signin-row {
+        margin-top: 1rem;
+    }
+
+    .signin-btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 0.7rem 1rem;
+        background: #111827;
+        color: #ffffff;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.9rem;
+        margin-top: 1.25rem;
+    }
+
+    .action-card {
+        display: block;
+        padding: 1rem 1rem 0.95rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        background: #f9fafb;
+        text-decoration: none;
+        color: inherit;
+        transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+    }
+
+    .action-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+        transform: translateY(-1px);
+    }
+
+    .action-label {
+        display: inline-block;
+        margin-bottom: 0.45rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #6b7280;
+    }
+
+    .action-card h2 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .action-card p {
+        margin: 0.55rem 0 0;
+        color: #4b5563;
+        line-height: 1.55;
+        font-size: 0.95rem;
+    }
+
+    .debug-panel {
+        margin-top: 1rem;
+        padding: 0.9rem 1rem;
+        border: 1px solid #fecaca;
+        border-radius: 14px;
+        background: #fff7f7;
+        color: #991b1b;
+    }
+
+    .debug-panel pre {
+        margin: 0.7rem 0 0;
+        padding: 0.8rem;
+        border-radius: 10px;
+        background: #111827;
+        color: #d1fae5;
+        overflow-x: auto;
+        font-size: 0.82rem;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    @media (max-width: 640px) {
+        .home-shell {
+            padding: 1rem 0.75rem 1.5rem;
         }
-        .card {
-            background: #fff;
-            border-radius: 6px;
-            padding: 20px;
-            max-width: 900px;
-            margin: auto;
-            box-shadow: 0 2px 6px rgba(0,0,0,.08);
+
+        .home-card {
+            padding: 1.1rem;
         }
-        h1 {
-            margin-top: 0;
+
+        .home-title {
+            font-size: 1.7rem;
         }
-        pre {
-            background: #111;
-            color: #0f0;
-            padding: 12px;
-            overflow-x: auto;
-            font-size: 13px;
-        }
-        .ok { color: #0a0; font-weight: bold; }
-        .bad { color: #c00; font-weight: bold; }
-        .row { margin-bottom: 12px; }
-        .label { font-weight: bold; }
-    </style>
-</head>
-<body>
+    }
+</style>
+{% endblock %}
 
-<div class="card">
-    <h1>BillAware – Auth Debug Dashboard</h1>
+{% block content %}
+<section class="home-shell">
+    <article class="home-card">
+        <h1 class="home-title">BillAware</h1>
+        <p class="home-slogan">Awareness is power</p>
+        <p class="home-copy">
+            Encode bills and receipts in one place, then allocate items or portions of items to the companies that actually own each purchase.
+        </p>
 
-    <div class="row">
-        <span class="label">Origin:</span>
-        <span id="origin"></span>
-    </div>
+        <div class="signin-row">
+            <button id="loginBtn" class="signin-btn hidden" type="button">Sign in with CommonAuth</button>
+        </div>
 
-    <div class="row">
-        <span class="label">Hostname:</span>
-        <span id="hostname"></span>
-    </div>
+        <div class="actions-grid">
+            <a href="{{ url_for('web.encode_bills') }}" class="action-card">
+                <span class="action-label">Operations</span>
+                <h2>Start Encoding</h2>
+                <p>Open the intake workflow for receipts, bills, and line-item allocation.</p>
+            </a>
 
-    <hr>
+            <a href="{{ url_for('web.settings') }}" class="action-card">
+                <span class="action-label">Configuration</span>
+                <h2>Settings</h2>
+                <p>Manage companies, suppliers, and the masterlist used during encoding.</p>
+            </a>
 
-    <div class="row">
-        <span class="label">Token Status:</span>
-        <span id="tokenStatus"></span>
-    </div>
+            <a href="{{ url_for('web.tags') }}" class="action-card">
+                <span class="action-label">Classification</span>
+                <h2>Tag Management</h2>
+                <p>Create reusable tags that can be shared across many different items.</p>
+            </a>
+        </div>
 
-    <div class="row">
-        <span class="label">Token Source:</span>
-        <span id="tokenSource"></span>
-    </div>
+        <section id="debugPanel" class="debug-panel hidden">
+            Authentication verification failed.
+            <pre id="backendPayload">No verification payload yet.</pre>
+        </section>
+    </article>
+</section>
+{% endblock %}
 
-    <div class="row">
-        <span class="label">Token Preview:</span>
-        <span id="tokenPreview"></span>
-    </div>
-
-    <hr>
-
-    <h3>Decoded JWT Payload (if applicable)</h3>
-    <pre id="jwtPayload">N/A</pre>
-
-    <hr>
-
-    <h3>Raw Token</h3>
-    <pre id="rawToken">N/A</pre>
-</div>
-
-<button id="loginBtn" style="padding:10px 14px; cursor:pointer;">
-  Login via CommonAuth
-</button>
-
+{% block scripts %}
 <script>
 (function () {
-    const originEl = document.getElementById("origin");
-    const hostEl = document.getElementById("hostname");
-    const statusEl = document.getElementById("tokenStatus");
-    const sourceEl = document.getElementById("tokenSource");
-    const previewEl = document.getElementById("tokenPreview");
-    const jwtEl = document.getElementById("jwtPayload");
-    const rawEl = document.getElementById("rawToken");
+    const callbackPath = {{ AUTH_CALLBACK_PATH|tojson }};
+    const loginUrl = {{ AUTH_LOGIN_URL|tojson }};
+    const loginBtn = document.getElementById("loginBtn");
+    const debugPanel = document.getElementById("debugPanel");
+    const backendPayload = document.getElementById("backendPayload");
 
-    originEl.textContent = window.location.origin;
-    hostEl.textContent = window.location.hostname;
-
-    let token = null;
-    let source = "none";
-
-    if (localStorage.getItem("access_token")) {
-        token = localStorage.getItem("access_token");
-        source = "localStorage.access_token";
-    } else if (sessionStorage.getItem("access_token")) {
-        token = sessionStorage.getItem("access_token");
-        source = "sessionStorage.access_token";
-    }
-
-    if (!token) {
-        statusEl.innerHTML = "<span class='bad'>NO TOKEN FOUND</span>";
-        sourceEl.textContent = "-";
-        previewEl.textContent = "-";
-        return;
-    }
-
-    statusEl.innerHTML = "<span class='ok'>TOKEN FOUND</span>";
-    sourceEl.textContent = source;
-    previewEl.textContent =
-        token.substring(0, 15) + " ... " + token.substring(token.length - 15);
-
-    rawEl.textContent = token;
-
-    // Try decoding JWT payload
-    try {
+    function decodePayload(token) {
         const payload = token.split(".")[1];
-        if (!payload) throw new Error("Not a JWT");
+        if (!payload) {
+            throw new Error("Missing JWT payload");
+        }
 
         const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
-        const json = JSON.stringify(JSON.parse(decoded), null, 2);
-        jwtEl.textContent = json;
-    } catch (e) {
-        jwtEl.textContent = "Token is not a valid JWT or could not be decoded.";
+        return JSON.parse(decoded);
     }
+
+    function getStoredToken() {
+        return (
+            localStorage.getItem("access_token") ||
+            sessionStorage.getItem("access_token") ||
+            localStorage.getItem("token") ||
+            sessionStorage.getItem("token")
+        );
+    }
+
+    async function verifyBackend(token) {
+        try {
+            const response = await fetch("/api/me", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const payload = await response.json().catch(() => ({
+                error: "invalid_json_response"
+            }));
+
+            if (!response.ok) {
+                backendPayload.textContent = JSON.stringify(payload, null, 2);
+                debugPanel.classList.remove("hidden");
+            }
+        } catch (error) {
+            backendPayload.textContent = String(error);
+            debugPanel.classList.remove("hidden");
+        }
+    }
+
+    async function hydrateHome() {
+        const token = getStoredToken();
+
+        if (!token) {
+            loginBtn.classList.remove("hidden");
+            return;
+        }
+
+        try {
+            decodePayload(token);
+        } catch (error) {
+            backendPayload.textContent = String(error);
+            debugPanel.classList.remove("hidden");
+            return;
+        }
+
+        await verifyBackend(token);
+    }
+
+    loginBtn.addEventListener("click", function () {
+        const returnTo = encodeURIComponent(window.location.origin + callbackPath);
+        window.location.href = `${loginUrl}?next=${returnTo}`;
+    });
+
+    hydrateHome();
 })();
 </script>
-
-<script>
-  document.getElementById("loginBtn").addEventListener("click", () => {
-    const returnTo = encodeURIComponent(window.location.origin + "/auth/callback");
-    window.location.href = `https://auth.ianeer.com/auth?next=${returnTo}`;
-  });
-</script>
-
-</body>
-</html>
+{% endblock %}

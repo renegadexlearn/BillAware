@@ -45,6 +45,7 @@
         <div class="top-right-icons">
             <!-- DESKTOP MENU -->
             <nav class="desktop-menu">
+                <span id="navCurrentUser" style="display:none; font-weight:600; color:#ffffff;"></span>
                 <a href="/">Home</a>
                 <a href="#" id="btnLogout" class="text-danger" style="display:none;">Logout</a>
             </nav>
@@ -61,6 +62,9 @@
     <!-- MOBILE SLIDE-DOWN MENU -->
     <nav class="cb-menu" id="cbMenu">
         <ul>
+            <li id="navCurrentUserMobileWrap" style="display:none; padding:8px 0; color:#ffffff; font-weight:600;">
+                <span id="navCurrentUserMobile"></span>
+            </li>
             <li><a href="/">Home</a></li>
             <li>
                 <a href="#" id="btnLogoutMobile" class="text-danger" style="display:none;">
@@ -108,6 +112,9 @@
     document.addEventListener("DOMContentLoaded", () => {
         const btnLogout = document.getElementById("btnLogout");
         const btnLogoutMobile = document.getElementById("btnLogoutMobile");
+        const navCurrentUser = document.getElementById("navCurrentUser");
+        const navCurrentUserMobile = document.getElementById("navCurrentUserMobile");
+        const navCurrentUserMobileWrap = document.getElementById("navCurrentUserMobileWrap");
 
         // Adjust if you standardize on one key
         const token =
@@ -116,14 +123,40 @@
             localStorage.getItem("token") ||
             sessionStorage.getItem("token");
 
+        function parseTokenClaims(rawToken) {
+            try {
+                const payload = rawToken.split(".")[1];
+                if (!payload) return null;
+                const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+                return JSON.parse(decoded);
+            } catch (err) {
+                return null;
+            }
+        }
+
         // Show logout buttons only when token exists
         if (token) {
             if (btnLogout) btnLogout.style.display = "";
             if (btnLogoutMobile) btnLogoutMobile.style.display = "";
+
+            const claims = parseTokenClaims(token);
+            const displayName = claims?.name || claims?.email || null;
+
+            if (displayName) {
+                if (navCurrentUser) {
+                    navCurrentUser.textContent = displayName;
+                    navCurrentUser.style.display = "";
+                }
+                if (navCurrentUserMobile && navCurrentUserMobileWrap) {
+                    navCurrentUserMobile.textContent = displayName;
+                    navCurrentUserMobileWrap.style.display = "";
+                }
+            }
         }
 
         function logout(e) {
             if (e) e.preventDefault();
+            const logoutUrl = {{ AUTH_LOGOUT_URL|tojson }};
 
             try {
                 localStorage.removeItem("access_token");
@@ -134,9 +167,12 @@
                 sessionStorage.removeItem("me");
             } catch (err) {}
 
+            if (navCurrentUser) navCurrentUser.style.display = "none";
+            if (navCurrentUserMobileWrap) navCurrentUserMobileWrap.style.display = "none";
+
             // Full logout: also clear CommonAuth session
             const returnTo = encodeURIComponent(window.location.origin + "/");
-            window.location.href = `https://auth.ianeer.com/logout?next=${returnTo}`;
+            window.location.href = `${logoutUrl}?next=${returnTo}`;
         }
 
         if (btnLogout) btnLogout.addEventListener("click", logout);

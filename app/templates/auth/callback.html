@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ APP_NAME }} | Signing In</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: #f6f7f9;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #1f2937;
+        }
+        .card {
+            width: min(32rem, calc(100vw - 2rem));
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+        }
+        .muted {
+            color: #6b7280;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 0.1rem 0.35rem;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Completing sign-in</h1>
+        <p class="muted" id="status">Processing authentication response...</p>
+        <p class="muted" id="details"></p>
+    </div>
+
+    <script>
+    (function () {
+        const statusEl = document.getElementById("status");
+        const detailsEl = document.getElementById("details");
+
+        function setMessage(status, details) {
+            statusEl.textContent = status;
+            detailsEl.textContent = details || "";
+        }
+
+        function parseParams(raw) {
+            const value = raw.startsWith("#") || raw.startsWith("?") ? raw.slice(1) : raw;
+            return new URLSearchParams(value);
+        }
+
+        const query = parseParams(window.location.search);
+        const hash = parseParams(window.location.hash);
+        const token =
+            query.get("access_token") ||
+            query.get("token") ||
+            query.get("jwt") ||
+            hash.get("access_token") ||
+            hash.get("token") ||
+            hash.get("jwt");
+
+        const next =
+            query.get("next") ||
+            hash.get("next") ||
+            "/";
+
+        if (!token) {
+            setMessage(
+                "Authentication response missing token.",
+                "Expected access_token, token, or jwt in the callback URL."
+            );
+            return;
+        }
+
+        try {
+            localStorage.setItem("access_token", token);
+            sessionStorage.removeItem("access_token");
+            window.location.replace(next);
+        } catch (error) {
+            setMessage(
+                "Could not store token locally.",
+                error instanceof Error ? error.message : String(error)
+            );
+        }
+    })();
+    </script>
+</body>
+</html>

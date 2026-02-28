@@ -21,7 +21,10 @@ def create_app():
     @app.context_processor
     def inject_app_branding():
         return {
-            "APP_NAME": app.config.get("APP_NAME", "App")
+            "APP_NAME": app.config.get("APP_NAME", "App"),
+            "AUTH_LOGIN_URL": app.config.get("AUTH_LOGIN_URL", ""),
+            "AUTH_LOGOUT_URL": app.config.get("AUTH_LOGOUT_URL", ""),
+            "AUTH_CALLBACK_PATH": app.config.get("AUTH_CALLBACK_PATH", "/auth/callback"),
         }
 
     # Jinja filters

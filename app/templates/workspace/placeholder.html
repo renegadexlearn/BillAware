@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | {{ APP_NAME }}{% endblock %}
+
+{% block styles %}
+<style>
+    .workspace-shell {
+        padding: 2rem 1rem 3rem;
+    }
+
+    .placeholder-card {
+        max-width: 56rem;
+        margin: 0 auto;
+        padding: 2rem;
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(255, 182, 208, 0.7), transparent 28%),
+            linear-gradient(145deg, #fffdfb 0%, #f5fbff 100%);
+        box-shadow: 0 18px 50px rgba(31, 41, 55, 0.1);
+    }
+
+    .eyebrow {
+        display: inline-block;
+        margin-bottom: 0.9rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        background: #eef6ff;
+        color: #355070;
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .placeholder-card h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 3rem);
+        color: #1a1d21;
+    }
+
+    .placeholder-card p {
+        margin: 1rem 0 0;
+        max-width: 42rem;
+        color: #4b5563;
+        line-height: 1.7;
+        font-size: 1.04rem;
+    }
+
+    .next-list {
+        margin: 1.5rem 0 0;
+        padding-left: 1.2rem;
+        color: #374151;
+        line-height: 1.7;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 1.75rem;
+        color: #1a1d21;
+        font-weight: 700;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="workspace-shell">
+    <article class="placeholder-card">
+        <span class="eyebrow">{{ eyebrow }}</span>
+        <h1>{{ page_title }}</h1>
+        <p>{{ description }}</p>
+
+        <ul class="next-list">
+            <li>Define the core data model for this module.</li>
+            <li>Design the first operational screen instead of a generic CRUD list.</li>
+            <li>Wire the view to the authenticated user context from CommonAuth.</li>
+        </ul>
+
+        <a href="{{ url_for('web.dashboard') }}" class="back-link">Back to workspace</a>
+    </article>
+</section>
+{% endblock %}
