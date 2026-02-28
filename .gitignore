@@ -27,7 +27,6 @@ myenv/
 instance/
 .env
 .env.server
-.env.compose
 
 # =========================
 # Build / work folders

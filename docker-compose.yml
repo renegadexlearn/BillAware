@@ -2,7 +2,6 @@ services:
   db:
     image: mariadb:11
     container_name: billaware_db
-    env_file: .env.compose
     environment:
       MARIADB_DATABASE: ${DB_NAME}
       MARIADB_USER: ${DB_USER}
@@ -20,12 +19,12 @@ services:
   web:
     build: .
     container_name: billaware_web
-    env_file: .env.compose
+    env_file: .env
     depends_on:
       db:
         condition: service_healthy
     ports:
-      # Host port comes from the resolved .env.compose (APP_PORT)
+      # Host port comes from .env (APP_PORT)
       - "127.0.0.1:${APP_PORT}:8000"
     volumes:
       - ${JWT_PUBLIC_KEY_FILE}:${JWT_PUBLIC_KEY_PATH}:ro
