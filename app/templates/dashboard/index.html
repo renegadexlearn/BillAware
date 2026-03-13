@@ -1,239 +1,351 @@
 {% extends "base.html" %}
 
-{% block title %}{{ APP_NAME }}{% endblock %}
+{% block title %}{{ APP_NAME }} Dashboard{% endblock %}
 
 {% block styles %}
 <style>
-    .home-shell {
-        padding: 1.25rem 1rem 2rem;
+    .dash-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 1rem 1rem 2rem;
     }
 
-    .home-card {
-        border: 1px solid #e5e7eb;
-        border-radius: 18px;
-        padding: 1.5rem;
-        background: #ffffff;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    .dash-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 1rem;
+        margin-bottom: 1rem;
     }
 
-    .home-title {
+    .dash-title {
         margin: 0;
-        font-size: 2rem;
-        line-height: 1.1;
+        font-size: 1.65rem;
         font-weight: 800;
-        color: #111827;
+        color: #11243d;
     }
 
-    .home-slogan {
-        margin: 0.35rem 0 0;
-        font-size: 0.95rem;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: #6b7280;
+    .dash-subtitle {
+        margin: 0.2rem 0 0;
+        color: #64748b;
+        font-size: 0.92rem;
     }
 
-    .home-copy {
-        max-width: 52rem;
-        margin: 0.9rem 0 0;
-        color: #4b5563;
-        line-height: 1.65;
-    }
-
-    .actions-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 0.9rem;
-        margin-top: 1.25rem;
-    }
-
-    .action-card {
-        display: block;
-        padding: 1rem 1rem 0.95rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        background: #f9fafb;
-        text-decoration: none;
-        color: inherit;
-        transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
-    }
-
-    .action-card:hover {
-        border-color: #cbd5e1;
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-        transform: translateY(-1px);
-    }
-
-    .action-label {
-        display: inline-block;
-        margin-bottom: 0.45rem;
-        font-size: 0.72rem;
+    .dash-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.45rem 0.8rem;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 0.83rem;
         font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #6b7280;
     }
 
-    .action-card h2 {
+    .dash-section {
+        border: 1px solid #dbe4ef;
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+    }
+
+    .dash-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+    }
+
+    .dash-section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem;
+        padding: 0.95rem 1rem 0.7rem;
+        border-bottom: 1px solid #e7edf5;
+    }
+
+    .dash-section-title {
         margin: 0;
-        font-size: 1.1rem;
+        font-size: 0.98rem;
         font-weight: 800;
-        color: #111827;
+        color: #11243d;
     }
 
-    .action-card p {
-        margin: 0.55rem 0 0;
-        color: #4b5563;
-        line-height: 1.55;
-        font-size: 0.95rem;
-    }
-
-    .debug-panel {
-        margin-top: 1rem;
-        padding: 0.9rem 1rem;
-        border: 1px solid #fecaca;
-        border-radius: 14px;
-        background: #fff7f7;
-        color: #991b1b;
-    }
-
-    .debug-panel pre {
-        margin: 0.7rem 0 0;
-        padding: 0.8rem;
-        border-radius: 10px;
-        background: #111827;
-        color: #d1fae5;
-        overflow-x: auto;
+    .dash-section-copy {
+        margin: 0.18rem 0 0;
         font-size: 0.82rem;
+        color: #64748b;
     }
 
-    .hidden {
-        display: none !important;
+    .dash-links {
+        display: grid;
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    .dash-link,
+    .dash-button {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.75rem 0.8rem;
+        border: 1px solid transparent;
+        border-radius: 14px;
+        background: transparent;
+        color: inherit;
+        text-decoration: none;
+        text-align: left;
+        transition: background-color 120ms ease, border-color 120ms ease;
+    }
+
+    .dash-link:hover,
+    .dash-button:hover {
+        background: #f8fafc;
+        border-color: #dbe4ef;
+    }
+
+    .dash-button {
+        cursor: pointer;
+    }
+
+    .dash-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 11px;
+        background: #eef2ff;
+        color: #334155;
+        flex: 0 0 auto;
+        font-size: 0.95rem;
+        font-weight: 800;
+    }
+
+    .dash-link-text {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    .dash-link-title {
+        display: block;
+        font-size: 0.93rem;
+        font-weight: 700;
+        color: #11243d;
+        line-height: 1.2;
+    }
+
+    .dash-link-meta {
+        display: block;
+        margin-top: 0.12rem;
+        color: #64748b;
+        font-size: 0.81rem;
+        line-height: 1.25;
+    }
+
+    .dash-arrow {
+        color: #94a3b8;
+        flex: 0 0 auto;
+    }
+
+    .sync-meta {
+        display: grid;
+        gap: 0.35rem;
+        padding: 0.8rem 1rem 0;
+        color: #475569;
+        font-size: 0.85rem;
+    }
+
+    .sync-actions {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.8rem 1rem 1rem;
+        flex-wrap: wrap;
+    }
+
+    .sync-actions form {
+        margin: 0;
+    }
+
+    .compact-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        width: auto;
+        padding: 0.5rem 0.8rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        background: #fff;
+        color: #0f172a;
+        font-size: 0.84rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .compact-btn.primary {
+        border-color: #1d4ed8;
+        background: #1d4ed8;
+        color: #fff;
+    }
+
+    @media (max-width: 900px) {
+        .dash-grid {
+            grid-template-columns: 1fr;
+        }
     }
 
     @media (max-width: 640px) {
-        .home-shell {
-            padding: 1rem 0.75rem 1.5rem;
+        .dash-wrap {
+            padding-inline: 0.75rem;
         }
 
-        .home-card {
-            padding: 1.1rem;
+        .dash-head {
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        .home-title {
-            font-size: 1.7rem;
-        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="home-shell">
-    <article class="home-card">
-        <h1 class="home-title">BillAware</h1>
-        <p class="home-slogan">Awareness is power</p>
-        <p class="home-copy">
-            Encode bills and receipts in one place, then allocate items or portions of items to the companies that actually own each purchase.
-        </p>
-
-        <div class="actions-grid">
-            <a href="{{ url_for('web.encode_bills') }}" class="action-card">
-                <span class="action-label">Operations</span>
-                <h2>Start Encoding</h2>
-                <p>Open the intake workflow for receipts, bills, and line-item allocation.</p>
-            </a>
-
-            <a href="{{ url_for('web.settings') }}" class="action-card">
-                <span class="action-label">Configuration</span>
-                <h2>Settings</h2>
-                <p>Manage companies, suppliers, and the masterlist used during encoding.</p>
-            </a>
-
-            <a href="{{ url_for('web.tags') }}" class="action-card">
-                <span class="action-label">Classification</span>
-                <h2>Tag Management</h2>
-                <p>Create reusable tags that can be shared across many different items.</p>
-            </a>
+<div class="dash-wrap">
+    <div class="dash-head">
+        <div>
+            <h1 class="dash-title">Dashboard</h1>
+            <p class="dash-subtitle">Compact commonAuth-backed control center for BillAware.</p>
         </div>
+        <span class="dash-chip">
+            {% if system_admin %}System Admin{% else %}commonAuth Connected{% endif %}
+        </span>
+    </div>
 
-        <section id="debugPanel" class="debug-panel hidden">
-            Authentication verification failed.
-            <pre id="backendPayload">No verification payload yet.</pre>
+    <div class="dash-grid">
+        <section class="dash-section">
+            <div class="dash-section-head">
+                <div>
+                    <h2 class="dash-section-title">Users, Roles & Sync</h2>
+                    <p class="dash-section-copy">Inspect mirrored commonAuth records, current access grants, and refresh them when needed.</p>
+                </div>
+            </div>
+
+            <div class="sync-meta">
+                <div>Last sync:
+                    {% if latest_run and latest_run.finished_at %}
+                    <strong>{{ latest_run.finished_at|datetime_ph }}</strong> | {{ latest_run.status|upper }}
+                    {% else %}
+                    <strong>No sync run yet</strong>
+                    {% endif %}
+                </div>
+                {% if latest_run and latest_run.error_message %}
+                <div>Error: {{ latest_run.error_message }}</div>
+                {% endif %}
+                {% if snapshot %}
+                <div>Signed in scope snapshot updated: {{ snapshot.synced_at|datetime_ph }}</div>
+                {% endif %}
+            </div>
+
+            <div class="sync-actions">
+                <form method="post" action="{{ url_for('web.manual_sync') }}">
+                    <button type="submit" class="compact-btn primary">Sync Now</button>
+                </form>
+                <form method="post" action="{{ url_for('web.manual_sync') }}">
+                    <input type="hidden" name="full" value="1">
+                    <button type="submit" class="compact-btn">Full Sync</button>
+                </form>
+                <a href="{{ url_for('web.sync_history') }}" class="compact-btn">History</a>
+            </div>
+
+            <div class="dash-links">
+                <a href="{{ url_for('web.users') }}" class="dash-link">
+                    <span class="dash-icon">U</span>
+                    <span class="dash-link-text">
+                        <span class="dash-link-title">Users</span>
+                        <span class="dash-link-meta">commonAuth user cache</span>
+                    </span>
+                    <span class="dash-arrow">&rsaquo;</span>
+                </a>
+                <a href="{{ url_for('web.employees') }}" class="dash-link">
+                    <span class="dash-icon">E</span>
+                    <span class="dash-link-text">
+                        <span class="dash-link-title">Employees</span>
+                        <span class="dash-link-meta">commonAuth employee cache</span>
+                    </span>
+                    <span class="dash-arrow">&rsaquo;</span>
+                </a>
+                <a href="{{ url_for('web.roles') }}" class="dash-link">
+                    <span class="dash-icon">R</span>
+                    <span class="dash-link-text">
+                        <span class="dash-link-title">Roles</span>
+                        <span class="dash-link-meta">Current commonAuth role grants</span>
+                    </span>
+                    <span class="dash-arrow">&rsaquo;</span>
+                </a>
+                <a href="{{ url_for('web.permissions') }}" class="dash-link">
+                    <span class="dash-icon">P</span>
+                    <span class="dash-link-text">
+                        <span class="dash-link-title">Permissions</span>
+                        <span class="dash-link-meta">Current commonAuth permission grants</span>
+                    </span>
+                    <span class="dash-arrow">&rsaquo;</span>
+                </a>
+                <a href="{{ url_for('web.scope_snapshot') }}" class="dash-link">
+                    <span class="dash-icon">S</span>
+                    <span class="dash-link-text">
+                        <span class="dash-link-title">My Scope</span>
+                        <span class="dash-link-meta">Resolved app scope and cached snapshot</span>
+                    </span>
+                    <span class="dash-arrow">&rsaquo;</span>
+                </a>
+                {% if system_admin %}
+                <a href="{{ url_for('web.theme_editor') }}" class="dash-link">
+                    <span class="dash-icon">T</span>
+                    <span class="dash-link-text">
+                        <span class="dash-link-title">Theme Editor</span>
+                        <span class="dash-link-meta">Customize app name, logo, and colors</span>
+                    </span>
+                    <span class="dash-arrow">&rsaquo;</span>
+                </a>
+                {% endif %}
+            </div>
         </section>
-    </article>
-</section>
-{% endblock %}
 
-{% block scripts %}
-<script>
-(function () {
-    const callbackPath = {{ AUTH_CALLBACK_PATH|tojson }};
-    const loginUrl = {{ AUTH_LOGIN_URL|tojson }};
-    const debugPanel = document.getElementById("debugPanel");
-    const backendPayload = document.getElementById("backendPayload");
-
-    function decodePayload(token) {
-        const payload = token.split(".")[1];
-        if (!payload) {
-            throw new Error("Missing JWT payload");
-        }
-
-        const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
-        return JSON.parse(decoded);
-    }
-
-    function getStoredToken() {
-        return (
-            localStorage.getItem("access_token") ||
-            sessionStorage.getItem("access_token") ||
-            localStorage.getItem("token") ||
-            sessionStorage.getItem("token")
-        );
-    }
-
-    async function verifyBackend(token) {
-        try {
-            const response = await fetch("/api/me", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            const payload = await response.json().catch(() => ({
-                error: "invalid_json_response"
-            }));
-
-            if (!response.ok) {
-                backendPayload.textContent = JSON.stringify(payload, null, 2);
-                debugPanel.classList.remove("hidden");
-            }
-        } catch (error) {
-            backendPayload.textContent = String(error);
-            debugPanel.classList.remove("hidden");
-        }
-    }
-
-    async function hydrateHome() {
-        const token = getStoredToken();
-
-        if (!token) {
-            const returnTo = encodeURIComponent(window.location.origin + callbackPath);
-            window.location.replace(`${loginUrl}?next=${returnTo}`);
-            return;
-        }
-
-        try {
-            decodePayload(token);
-        } catch (error) {
-            backendPayload.textContent = String(error);
-            debugPanel.classList.remove("hidden");
-            return;
-        }
-
-        await verifyBackend(token);
-    }
-
-    hydrateHome();
-})();
-</script>
+        <section class="dash-section">
+            <div class="dash-section-head">
+                <div>
+                    <h2 class="dash-section-title">Branches & Companies</h2>
+                    <p class="dash-section-copy">Read-only reference data mirrored from commonAuth.</p>
+                </div>
+            </div>
+            <div class="dash-links">
+                <a href="{{ url_for('web.main_groups') }}" class="dash-link">
+                    <span class="dash-icon">M</span>
+                    <span class="dash-link-text">
+                        <span class="dash-link-title">Main Groups</span>
+                        <span class="dash-link-meta">Current scope roots</span>
+                    </span>
+                    <span class="dash-arrow">&rsaquo;</span>
+                </a>
+                <a href="{{ url_for('web.companies') }}" class="dash-link">
+                    <span class="dash-icon">C</span>
+                    <span class="dash-link-text">
+                        <span class="dash-link-title">Companies</span>
+                        <span class="dash-link-meta">Cached company directory</span>
+                    </span>
+                    <span class="dash-arrow">&rsaquo;</span>
+                </a>
+                <a href="{{ url_for('web.branches') }}" class="dash-link">
+                    <span class="dash-icon">B</span>
+                    <span class="dash-link-text">
+                        <span class="dash-link-title">Branches</span>
+                        <span class="dash-link-meta">Cached branch directory</span>
+                    </span>
+                    <span class="dash-arrow">&rsaquo;</span>
+                </a>
+            </div>
+        </section>
+    </div>
+</div>
 {% endblock %}

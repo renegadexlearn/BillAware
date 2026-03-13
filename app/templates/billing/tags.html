@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Tags{% endblock %}
+
+{% block styles %}
+<style>
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:nowrap; }
+    .header-actions { display:flex; align-items:center; gap:0.75rem; margin-left:auto; flex-shrink:0; }
+    .surface { border: 1px solid #dbe4ef; border-radius: 18px; background: #fff; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05); padding: 1rem; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { padding: 0.75rem; border-bottom: 1px solid #e7edf5; text-align:left; }
+    th { background: #f8fafc; font-size: 0.76rem; text-transform: uppercase; color: #475569; }
+    .modal-backdrop-lite {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        z-index: 1050;
+    }
+    .modal-backdrop-lite.open { display: flex; }
+    .modal-card-lite {
+        width: min(100%, 560px);
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 24px 64px rgba(15, 23, 42, 0.22);
+        border: 1px solid #dbe4ef;
+        overflow: hidden;
+    }
+    .modal-card-lite form { margin: 0; }
+    .modal-head-lite,
+    .modal-body-lite,
+    .modal-foot-lite { padding: 1rem 1.1rem; }
+    .modal-head-lite {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        border-bottom: 1px solid #e7edf5;
+    }
+    .modal-foot-lite {
+        display:flex;
+        justify-content:flex-end;
+        gap:0.75rem;
+        border-top: 1px solid #e7edf5;
+        background: #f8fafc;
+    }
+    .modal-close-lite {
+        border: 0;
+        background: transparent;
+        font-size: 1.5rem;
+        line-height: 1;
+        color: #64748b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+    <div class="page-header mb-3">
+        <div>
+            <h1 class="h3 mb-1">Tags</h1>
+            <div class="text-muted">Reusable product categories and labels.</div>
+        </div>
+        <div class="header-actions">
+            <button type="button" class="btn btn-primary" data-open-tag-modal>Create Tag</button>
+            <a href="{{ url_for('billing.bill_list') }}" class="btn btn-outline-secondary">Back</a>
+        </div>
+    </div>
+
+    <section class="surface">
+        <table>
+            <thead>
+                <tr><th>Name</th><th>Description</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                <tr>
+                    <td>{{ tag.name }}</td>
+                    <td>{{ tag.description or "-" }}</td>
+                    <td class="text-end">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            data-open-edit-tag-modal
+                            data-edit-url="{{ url_for('billing.tag_edit', tag_id=tag.id) }}"
+                            data-name="{{ tag.name }}"
+                            data-description="{{ tag.description or '' }}"
+                        >
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="text-muted">No tags yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<div class="modal-backdrop-lite" id="tagModal" aria-hidden="true">
+    <div class="modal-card-lite" role="dialog" aria-modal="true" aria-labelledby="tagModalTitle">
+        <form method="post">
+            <div class="modal-head-lite">
+                <div>
+                    <h2 id="tagModalTitle" class="h5 mb-1">Create Tag</h2>
+                    <div class="text-muted small">Add a reusable product category or label.</div>
+                </div>
+                <button type="button" class="modal-close-lite" aria-label="Close" data-close-tag-modal>&times;</button>
+            </div>
+            <div class="modal-body-lite">
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="mb-0">
+                    <label class="form-label">Description</label>
+                    <input type="text" name="description" class="form-control">
+                </div>
+            </div>
+            <div class="modal-foot-lite">
+                <button type="button" class="btn btn-outline-secondary" data-close-tag-modal>Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Tag</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-backdrop-lite" id="editTagModal" aria-hidden="true">
+    <div class="modal-card-lite" role="dialog" aria-modal="true" aria-labelledby="editTagModalTitle">
+        <form method="post" id="editTagForm">
+            <div class="modal-head-lite">
+                <div>
+                    <h2 id="editTagModalTitle" class="h5 mb-1">Edit Tag</h2>
+                    <div class="text-muted small">Update the reusable product category or label.</div>
+                </div>
+                <button type="button" class="modal-close-lite" aria-label="Close" data-close-edit-tag-modal>&times;</button>
+            </div>
+            <div class="modal-body-lite">
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="name" id="edit_tag_name" class="form-control" required>
+                </div>
+                <div class="mb-0">
+                    <label class="form-label">Description</label>
+                    <input type="text" name="description" id="edit_tag_description" class="form-control">
+                </div>
+            </div>
+            <div class="modal-foot-lite">
+                <button type="button" class="btn btn-outline-secondary" data-close-edit-tag-modal>Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("tagModal");
+    const openButton = document.querySelector("[data-open-tag-modal]");
+    const closeButtons = document.querySelectorAll("[data-close-tag-modal]");
+
+    if (!modal || !openButton) {
+        return;
+    }
+
+    const openModal = () => {
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+    };
+
+    const closeModal = () => {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+    };
+
+    openButton.addEventListener("click", openModal);
+    closeButtons.forEach((button) => button.addEventListener("click", closeModal));
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && modal.classList.contains("open")) {
+            closeModal();
+        }
+    });
+
+    const editModal = document.getElementById("editTagModal");
+    const editForm = document.getElementById("editTagForm");
+    const editButtons = document.querySelectorAll("[data-open-edit-tag-modal]");
+    const editCloseButtons = document.querySelectorAll("[data-close-edit-tag-modal]");
+    const editName = document.getElementById("edit_tag_name");
+    const editDescription = document.getElementById("edit_tag_description");
+
+    if (!editModal || !editForm) {
+        return;
+    }
+
+    const openEditModal = (button) => {
+        editForm.action = button.dataset.editUrl || "";
+        editName.value = button.dataset.name || "";
+        editDescription.value = button.dataset.description || "";
+        editModal.classList.add("open");
+        editModal.setAttribute("aria-hidden", "false");
+    };
+
+    const closeEditModal = () => {
+        editModal.classList.remove("open");
+        editModal.setAttribute("aria-hidden", "true");
+    };
+
+    editButtons.forEach((button) => {
+        button.addEventListener("click", () => openEditModal(button));
+    });
+    editCloseButtons.forEach((button) => button.addEventListener("click", closeEditModal));
+    editModal.addEventListener("click", (event) => {
+        if (event.target === editModal) {
+            closeEditModal();
+        }
+    });
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && editModal.classList.contains("open")) {
+            closeEditModal();
+        }
+    });
+});
+</script>
+{% endblock %}

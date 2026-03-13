@@ -3,16 +3,17 @@
   height: var(--navbar-height);
   overflow: visible;
   display:flex;
-  align-items:flex-start;
-  padding-top:8px;
+  align-items:center;
+  padding-top:0;
   box-sizing: border-box;
   background-color: #2A2A2A;
 }
 
 .top-left-logo{
   position: absolute;
-  top: 8px;
+  top: 50%;
   left: 14px;
+  transform: translateY(-50%);
   
   display: flex;
   align-items: center;
@@ -30,7 +31,7 @@
 
 /* Round icon */
 .top-left-logo .brand-icon {
-  height: 34px;          /* control height only */
+  height: 28px;          /* control height only */
   width: auto;           /* keep logo proportions */
   border-radius: 6px;    /* slight rounding (optional) */
   background: transparent;
@@ -47,12 +48,13 @@
   z-index:12;
   display:flex;
   align-items:center;
-  gap:14px;
+  gap:10px;
+  height: 100%;
 }
 
 .top-right-icons svg{
-  width:36px;
-  height:36px;
+  width:28px;
+  height:28px;
   opacity:0.9;
   color:#333;
 }

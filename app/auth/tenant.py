@@ -1,12 +1,12 @@
 from functools import wraps
 from flask import request, jsonify, g
+from .scope import jwt_allows_company
 
 def require_company(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         jwt_claims = getattr(g, "jwt", None) or {}
         roles = jwt_claims.get("roles") or []
-        companies = jwt_claims.get("companies") or []
 
         # system_admin bypass: company header optional
         if "system_admin" in roles:
@@ -31,8 +31,7 @@ def require_company(fn):
             return jsonify({"error": "company_invalid"}), 400
 
         # must be allowed by token
-        allowed_ids = set(int(x) for x in companies)
-        if company_id not in allowed_ids:
+        if not jwt_allows_company(company_id):
             return jsonify({"error": "company_forbidden"}), 403
 
         g.company_id = company_id

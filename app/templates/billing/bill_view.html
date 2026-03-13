@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Bill {{ bill.bill_number or bill.id }}{% endblock %}
+
+{% block styles %}
+<style>
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+    .surface { border: 1px solid #dbe4ef; border-radius: 18px; background: #fff; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05); padding: 1rem; }
+    .line-card { border: 1px solid #e2e8f0; border-radius: 16px; padding: 0.9rem; background: #f8fafc; margin-top: 0.8rem; }
+    .compact-btn { display:inline-flex; width:auto; padding:0.55rem 0.9rem; border:1px solid #cbd5e1; border-radius:12px; text-decoration:none; font-weight:700; color:#0f172a; background:#fff; }
+    .compact-btn.primary { background:#1d4ed8; border-color:#1d4ed8; color:#fff; }
+    .summary-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:0.5rem 1rem; }
+    @media (max-width: 900px) { .summary-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+    <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
+        <div>
+            <h1 class="h3 mb-1">{{ bill.supplier.name }}</h1>
+            <div class="text-muted">
+                {% if bill.document_type %}{{ bill.document_type.code }} · {% endif %}Bill {{ bill.bill_number or "#" ~ bill.id }} · {{ bill.bill_date|date_ph }} · {{ bill.status|title }}
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('billing.bill_list') }}" class="compact-btn">All Bills</a>
+            <a href="{{ url_for('billing.bill_edit', bill_id=bill.id) }}" class="compact-btn primary">Edit Bill</a>
+        </div>
+    </div>
+
+    <div class="surface">
+        <div class="summary-grid">
+            <div><strong>Document Type:</strong> {% if bill.document_type %}{{ bill.document_type.code }} - {{ bill.document_type.name }}{% else %}-{% endif %}</div>
+            <div><strong>Supplier TIN:</strong> {{ bill.supplier.tin or "-" }}</div>
+            <div><strong>Supplier Address:</strong> {{ bill.supplier.address or "-" }}</div>
+            <div><strong>Subtotal:</strong> {{ "%.2f"|format(bill.subtotal) }}</div>
+            <div><strong>Subtotal Discount:</strong> {{ "%.2f"|format(bill.subtotal_discount_amount or 0) }}</div>
+            <div><strong>Additional Tax:</strong> {{ "%.2f"|format(bill.additional_tax_amount) }}</div>
+            <div><strong>Total Amount:</strong> {{ "%.2f"|format(bill.display_total_amount) }}</div>
+        </div>
+        {% if bill.notes %}
+        <hr>
+        <div><strong>Notes:</strong> {{ bill.notes }}</div>
+        {% endif %}
+    </div>
+
+    <div class="surface">
+        <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-2">
+            <div>
+                <h2 class="h5 mb-1">Line Items</h2>
+                <div class="text-muted small">Receipt details and branch or company allocations.</div>
+            </div>
+        </div>
+        {% for line in bill.line_items %}
+        <div class="line-card">
+            <div class="d-flex justify-content-between gap-2 flex-wrap">
+                <div>
+                    <strong>{{ loop.index }}. {{ line.description }}</strong>
+                    <div class="text-muted small">
+                        {{ line.quantity }} {{ line.unit or "" }} @ {{ "%.2f"|format(line.unit_price or 0) }}
+                        · Line Discount {{ "%.2f"|format(line.line_discount_amount or 0) }}
+                    </div>
+                </div>
+                <div><strong>{{ "%.2f"|format(line.line_total) }}</strong></div>
+            </div>
+            <div class="text-muted small mt-2">Allocated {{ "%.2f"|format(line.allocated_quantity) }} / {{ "%.2f"|format(line.quantity or 0) }} · Unallocated {{ "%.2f"|format(line.unallocated_quantity) }}</div>
+            <div class="mt-3">
+                <strong>Allocations</strong>
+                <ul class="mt-2 mb-0">
+                    {% for allocation in line.allocations %}
+                    <li>
+                        {{ "%.2f"|format(allocation.quantity or 0) }} to
+                        {% if allocation.target_type == "branch" %}
+                        branch {{ branch_map.get(allocation.target_id).name if branch_map.get(allocation.target_id) else allocation.target_id }}
+                        {% else %}
+                        company {{ company_map.get(allocation.target_id).name if company_map.get(allocation.target_id) else allocation.target_id }}
+                        {% endif %}
+                        {% if allocation.notes %}· {{ allocation.notes }}{% endif %}
+                    </li>
+                    {% else %}
+                    <li class="text-muted">No allocations yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-muted">No line items yet.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

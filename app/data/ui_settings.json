@@ -1,0 +1,11 @@
+{
+  "app_title": "BillAware",
+  "logo_path": "images/logo.png",
+  "navbar_bg": "#1E3A5F",
+  "navbar_text": "#FFFFFF",
+  "primary_bg": "#2F7D6D",
+  "primary_hover": "#256659",
+  "primary_text": "#FFFFFF",
+  "accent_bg": "#E8F4F0",
+  "surface_tint": "#F6FAFD"
+}

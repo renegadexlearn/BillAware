@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Product{% endblock %}
+
+{% block styles %}
+<style>
+    .page-wrap { max-width: 900px; margin: 0 auto; padding: 1rem; }
+    .surface { border: 1px solid #dbe4ef; border-radius: 18px; background: #fff; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05); padding: 1rem; }
+    .layout { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem; }
+    .wide { grid-column: 1 / -1; }
+    .muted-mini { color:#64748b; font-size:0.8rem; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+    <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
+        <div>
+            <h1 class="h3 mb-1">Edit Product</h1>
+            <div class="text-muted">Name, tags, notes, and details can change. Units stay locked after creation.</div>
+        </div>
+        <a href="{{ url_for('billing.product_list') }}" class="btn btn-outline-secondary">Back to Products</a>
+    </div>
+    <section class="surface">
+        <form method="post">
+            <div class="layout">
+                <div>
+                    <label class="form-label">Generated Product Name</label>
+                    <input type="text" name="derived_name" id="derived_name" class="form-control" value="{{ product_form.derived_name }}" readonly>
+                    <div class="muted-mini mt-1">This updates automatically from the fields below.</div>
+                </div>
+                <div>
+                    <label class="form-label">Barcode</label>
+                    <input type="text" name="barcode" class="form-control" value="{{ product_form.barcode }}">
+                </div>
+                <div>
+                    <label class="form-label">Alias</label>
+                    <input type="text" name="alias_name" class="form-control" value="{{ product_form.alias_name }}">
+                </div>
+                <div>
+                    <label class="form-label">Default Unit</label>
+                    <input type="text" class="form-control" value="{{ product.default_unit or '-' }}" readonly>
+                </div>
+                <div>
+                    <label class="form-label">Allowed Units</label>
+                    <input type="text" class="form-control" value="{{ (product.unit_options or [])|join(', ') or '-' }}" readonly>
+                    <div class="muted-mini mt-1">Units cannot be changed after the product is created.</div>
+                </div>
+                <div class="wide">
+                    <label class="form-label">Unit Conversions</label>
+                    <textarea name="unit_conversions" class="form-control" rows="5" placeholder="1 ream = 500 sheets&#10;1 box = 24 pcs">{{ product_form.unit_conversions }}</textarea>
+                    <div class="muted-mini mt-1">You can update conversion rules using the existing units only.</div>
+                </div>
+                <div>
+                    <label class="form-label">Brand</label>
+                    <input type="text" name="brand" id="brand" class="form-control" value="{{ product_form.brand }}">
+                </div>
+                <div>
+                    <label class="form-label">Description</label>
+                    <input type="text" name="description" id="description" class="form-control" value="{{ product_form.description }}">
+                </div>
+                <div>
+                    <label class="form-label">Color</label>
+                    <input type="text" name="color" id="color" class="form-control" value="{{ product_form.color }}">
+                </div>
+                <div>
+                    <label class="form-label">Dimension</label>
+                    <input type="text" name="dimension" id="dimension" class="form-control" value="{{ product_form.dimension }}">
+                </div>
+                <div>
+                    <label class="form-label">Weight</label>
+                    <input type="text" name="weight" id="weight" class="form-control" value="{{ product_form.weight }}">
+                </div>
+                <div class="wide">
+                    <label class="form-label">Tags</label>
+                    <select name="tag_ids" class="form-select" multiple size="6">
+                        {% for tag in tags %}
+                        <option value="{{ tag.id }}" {% if tag.id in selected_tag_ids %}selected{% endif %}>{{ tag.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="wide">
+                    <label class="form-label">Notes</label>
+                    <textarea name="notes" class="form-control" rows="4">{{ product_form.notes }}</textarea>
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-3 flex-wrap">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{{ url_for('billing.product_list') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    (() => {
+        const fields = ["brand", "description", "dimension", "weight", "color"];
+        const derivedNameInput = document.getElementById("derived_name");
+
+        function buildName() {
+            const primary = fields.slice(0, 3)
+                .map((id) => (document.getElementById(id)?.value || "").trim())
+                .filter(Boolean)
+                .join(" ");
+            const suffix = fields.slice(3)
+                .map((id) => (document.getElementById(id)?.value || "").trim())
+                .filter(Boolean)
+                .join(", ");
+            derivedNameInput.value = suffix ? `${primary}, ${suffix}`.trim().replace(/^, /, "") : primary;
+        }
+
+        fields.forEach((id) => document.getElementById(id)?.addEventListener("input", buildName));
+        buildName();
+    })();
+</script>
+{% endblock %}

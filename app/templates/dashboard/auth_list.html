@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block styles %}
+<style>
+    .page-wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 1rem 1rem 2rem;
+    }
+
+    .page-head {
+        margin-bottom: 1rem;
+    }
+
+    .page-eyebrow {
+        margin: 0 0 0.25rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #64748b;
+        font-weight: 700;
+    }
+
+    .page-title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #11243d;
+    }
+
+    .page-subtitle {
+        margin: 0.3rem 0 0;
+        color: #64748b;
+    }
+
+    .surface {
+        border: 1px solid #dbe4ef;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        padding: 1rem;
+    }
+
+    .token-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+    }
+
+    .token-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.55rem 0.8rem;
+        border-radius: 999px;
+        border: 1px solid #dbe4ef;
+        background: #f8fafc;
+        color: #11243d;
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    .empty-state {
+        color: #64748b;
+    }
+
+    .back-link {
+        display: inline-flex;
+        margin-top: 0.9rem;
+        color: #1d4ed8;
+        text-decoration: none;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+    <div class="page-head">
+        <p class="page-eyebrow">{{ eyebrow }}</p>
+        <h1 class="page-title">{{ page_title }}</h1>
+        <p class="page-subtitle">{{ description }}</p>
+    </div>
+
+    <div class="surface">
+        {% if items %}
+        <div class="token-grid">
+            {% for item in items %}
+            <span class="token-chip">{{ item }}</span>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">No {{ page_title.lower() }} are currently attached to this session.</div>
+        {% endif %}
+    </div>
+
+    <a href="{{ url_for('web.dashboard') }}" class="back-link">Back to dashboard</a>
+</div>
+{% endblock %}

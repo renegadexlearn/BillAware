@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Sync History{% endblock %}
+
+{% block styles %}
+<style>
+    .page-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 1rem 1rem 2rem;
+    }
+
+    .surface {
+        border: 1px solid #dbe4ef;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        overflow: hidden;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 0.8rem 0.9rem;
+        border-bottom: 1px solid #e7edf5;
+        text-align: left;
+        vertical-align: top;
+        font-size: 0.9rem;
+    }
+
+    th {
+        background: #f8fafc;
+        color: #475569;
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .status-chip {
+        display: inline-flex;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .status-chip.failed {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .back-link {
+        display: inline-flex;
+        margin-top: 0.9rem;
+        color: #1d4ed8;
+        text-decoration: none;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+    <h1>commonAuth Sync History</h1>
+    <div class="surface">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Started</th>
+                    <th>Status</th>
+                    <th>Trigger</th>
+                    <th>Counts</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.started_at|datetime_ph }}</td>
+                    <td>
+                        <span class="status-chip{% if row.status == 'failed' %} failed{% endif %}">
+                            {{ row.status|upper }}
+                        </span>
+                    </td>
+                    <td>{{ row.trigger }}</td>
+                    <td>
+                        MG {{ row.main_groups_synced }} ·
+                        CO {{ row.companies_synced }} ·
+                        BR {{ row.branches_synced }} ·
+                        U {{ row.users_synced }} ·
+                        E {{ row.employees_synced }}
+                    </td>
+                    <td>
+                        {% if row.reason %}{{ row.reason }}{% endif %}
+                        {% if row.error_message %}
+                        <div>{{ row.error_message }}</div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ url_for('web.dashboard') }}" class="back-link">Back to dashboard</a>
+</div>
+{% endblock %}

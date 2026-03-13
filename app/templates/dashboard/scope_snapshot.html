@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}My Scope{% endblock %}
+
+{% block styles %}
+<style>
+    .page-wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 1rem 1rem 2rem;
+    }
+
+    .surface {
+        border: 1px solid #dbe4ef;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+        padding: 1rem;
+    }
+
+    pre {
+        margin: 0;
+        padding: 0.9rem;
+        border-radius: 14px;
+        background: #0f172a;
+        color: #e2e8f0;
+        overflow-x: auto;
+        font-size: 0.82rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        margin-top: 0.9rem;
+        color: #1d4ed8;
+        text-decoration: none;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+    <h1>My Scope</h1>
+    <div class="surface">
+        <h2>Resolved App Scope</h2>
+        <pre>{{ app_scope | tojson(indent=2) }}</pre>
+    </div>
+    {% if snapshot %}
+    <div class="surface" style="margin-top: 1rem;">
+        <h2>Cached Snapshot</h2>
+        <pre>{{ snapshot.scope_payload | tojson(indent=2) }}</pre>
+    </div>
+    {% endif %}
+    <a href="{{ url_for('web.dashboard') }}" class="back-link">Back to dashboard</a>
+</div>
+{% endblock %}

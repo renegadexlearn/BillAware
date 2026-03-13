@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Theme Editor{% endblock %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 920px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">Theme Editor</h2>
+                    <div class="text-muted small">System admin only</div>
+                </div>
+                <a href="{{ url_for('web.dashboard') }}" class="btn btn-outline-secondary">Back</a>
+            </div>
+
+            <div class="mb-4">
+                <div class="fw-semibold mb-2">Presets</div>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for key, preset in presets.items() %}
+                    <form method="post" class="m-0">
+                        <input type="hidden" name="action" value="preset">
+                        <input type="hidden" name="preset" value="{{ key }}">
+                        <button type="submit" class="btn btn-outline-primary">{{ preset.label }}</button>
+                    </form>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="save">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">App Name</label>
+                        <input name="app_title" class="form-control" value="{{ settings.app_title }}" required>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Logo</label>
+                        <div class="d-flex flex-wrap align-items-center gap-3 p-3 border rounded">
+                            <img src="{{ url_for('static', filename=settings.logo_path or 'images/logo.png') }}" alt="Current logo" style="max-height: 56px; width: auto;">
+                            <div class="flex-grow-1">
+                                <input type="file" name="logo_file" class="form-control" accept=".png,.jpg,.jpeg,.gif,.svg,.webp,image/*">
+                                <div class="form-text">Upload a replacement logo image. Leave empty to keep the current logo.</div>
+                            </div>
+                            <button type="submit" name="logo_action" value="reset" class="btn btn-outline-secondary">Use Default Logo</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Navbar Background</label>
+                        <input type="color" name="navbar_bg" class="form-control form-control-color" value="{{ settings.navbar_bg }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Navbar Text</label>
+                        <input type="color" name="navbar_text" class="form-control form-control-color" value="{{ settings.navbar_text }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Primary Button</label>
+                        <input type="color" name="primary_bg" class="form-control form-control-color" value="{{ settings.primary_bg }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Primary Button Hover</label>
+                        <input type="color" name="primary_hover" class="form-control form-control-color" value="{{ settings.primary_hover }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Primary Button Text</label>
+                        <input type="color" name="primary_text" class="form-control form-control-color" value="{{ settings.primary_text }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Accent Background</label>
+                        <input type="color" name="accent_bg" class="form-control form-control-color" value="{{ settings.accent_bg }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Surface Tint</label>
+                        <input type="color" name="surface_tint" class="form-control form-control-color" value="{{ settings.surface_tint }}">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Save Theme</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

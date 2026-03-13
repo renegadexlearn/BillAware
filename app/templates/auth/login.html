@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ APP_NAME }} | Login{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4 p-lg-5">
+                    <h1 class="h3 mb-3">Sign in to {{ APP_NAME }}</h1>
+                    <p class="text-muted mb-4">This app uses Single Sign-On via commonAuth.</p>
+                    <a class="btn btn-primary w-100" href="{{ url_for('auth.login_common_auth', next=request.args.get('next')) }}">
+                        Login with commonAuth
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

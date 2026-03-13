@@ -78,18 +78,21 @@
     }
 
     .desktop-menu a {
-        display: inline-block;
-        padding: 6px 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 32px;
+        padding: 0 14px;
         background: var(--metal-light);
         color: var(--metal-text);        /* slate gray text */
         font-weight: 600;
         font-size: 0.85rem;
+        line-height: 1;
         text-decoration: none;
-        border-radius: 20px;   /* pill chip */
+        border-radius: 8px;
         border: 1px solid rgba(0,0,0,0.05);
         transition: all 0.2s ease;
     }
-
     .desktop-menu a:hover {
         background:var(--metal-dark);    /* soft rose */
         color: white;

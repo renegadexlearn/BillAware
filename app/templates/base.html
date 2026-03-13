@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>{% block title %}{{ APP_NAME }}{% endblock %}</title>
+    <title>{% block title %}{{ app_title or APP_NAME }}{% endblock %}</title>
 
     <!-- Bootstrap 5 CSS -->
     <link
@@ -25,6 +25,107 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
 
     {% block styles %}{% endblock %}
+
+    <style>
+        :root {
+            --theme-navbar-bg: {{ ui_settings.navbar_bg if ui_settings else '#1E3A5F' }};
+            --theme-navbar-text: {{ ui_settings.navbar_text if ui_settings else '#FFFFFF' }};
+            --theme-primary-bg: {{ ui_settings.primary_bg if ui_settings else '#2F7D6D' }};
+            --theme-primary-hover: {{ ui_settings.primary_hover if ui_settings else '#256659' }};
+            --theme-primary-text: {{ ui_settings.primary_text if ui_settings else '#FFFFFF' }};
+            --theme-accent-bg: {{ ui_settings.accent_bg if ui_settings else '#E8F4F0' }};
+            --theme-surface-tint: {{ ui_settings.surface_tint if ui_settings else '#F6FAFD' }};
+        }
+
+        body {
+            background: linear-gradient(180deg, var(--theme-surface-tint) 0%, #ffffff 240px);
+        }
+
+        .nav-link-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .nav-user-name {
+            font-weight: 600;
+            line-height: 1;
+            color: var(--theme-navbar-text) !important;
+            white-space: nowrap;
+        }
+
+        .awning {
+            background-color: var(--theme-navbar-bg) !important;
+            color: var(--theme-navbar-text) !important;
+        }
+
+        .awning a,
+        .awning span,
+        .cb-menu a,
+        .cb-menu span {
+            color: var(--theme-navbar-text) !important;
+        }
+
+        .cb-menu {
+            background-color: var(--theme-navbar-bg) !important;
+        }
+
+        .btn-primary,
+        .btn-success,
+        .compact-btn.primary {
+            background-color: var(--theme-primary-bg) !important;
+            border-color: var(--theme-primary-bg) !important;
+            color: var(--theme-primary-text) !important;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus,
+        .btn-success:hover,
+        .btn-success:focus,
+        .compact-btn.primary:hover,
+        .compact-btn.primary:focus {
+            background-color: var(--theme-primary-hover) !important;
+            border-color: var(--theme-primary-hover) !important;
+            color: var(--theme-primary-text) !important;
+        }
+
+        .btn-outline-primary {
+            border-color: var(--theme-primary-bg) !important;
+            color: var(--theme-primary-bg) !important;
+            background-color: #ffffff !important;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active {
+            background-color: var(--theme-primary-bg) !important;
+            border-color: var(--theme-primary-bg) !important;
+            color: var(--theme-primary-text) !important;
+        }
+
+        .desktop-menu a {
+            background-color: var(--theme-primary-bg) !important;
+            border: 1px solid var(--theme-primary-bg) !important;
+            color: var(--theme-primary-text) !important;
+        }
+
+        .desktop-menu a:hover,
+        .desktop-menu a:focus {
+            background-color: var(--theme-primary-hover) !important;
+            border-color: var(--theme-primary-hover) !important;
+            color: var(--theme-primary-text) !important;
+        }
+
+        .desktop-menu a.text-danger,
+        .desktop-menu a.text-danger:hover,
+        .desktop-menu a.text-danger:focus,
+        .cb-menu a.text-danger,
+        .cb-menu a.text-danger:hover,
+        .cb-menu a.text-danger:focus {
+            color: var(--theme-primary-text) !important;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -35,19 +136,29 @@
             <a href="https://ianeer.com" aria-label="Go to ianeer.com">
                 <img
                     class="brand-icon"
-                    src="{{ url_for('static', filename='images/logo-ianeer-small.png') }}"
+                    src="{{ url_for('static', filename=ui_settings.logo_path or 'images/logo.png') }}"
                     alt="Logo"
                 >
             </a>
-            BILLAWARE
+            {% if current_user.is_authenticated %}
+            <span class="nav-user-name">{{ current_user.display_name }}</span>
+            {% endif %}
         </div>
 
         <div class="top-right-icons">
             <!-- DESKTOP MENU -->
             <nav class="desktop-menu">
-                <span id="navCurrentUser" style="display:none; font-weight:600; color:#ffffff;"></span>
-                <a href="/">Home</a>
-                <a href="#" id="btnLogout" class="text-danger" style="display:none;">Logout</a>
+                {% if current_user.is_authenticated and current_user.has_permission('dashboard_view') %}
+                <a href="{{ url_for('web.dashboard') }}"><span class="nav-link-icon"><span>Dashboard</span></span></a>
+                {% endif %}
+                {% if current_user.is_authenticated and current_user.has_permission('encode_view') %}
+                <a href="{{ url_for('billing.bill_list') }}"><span class="nav-link-icon"><span>Purchases</span></span></a>
+                {% endif %}
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('auth.logout') }}" class="text-danger logout-link" aria-label="Logout" title="Logout">
+                    <span class="nav-link-icon"><span>Logout</span></span>
+                </a>
+                {% endif %}
             </nav>
 
             <!-- Hamburger – mobile only -->
@@ -62,15 +173,24 @@
     <!-- MOBILE SLIDE-DOWN MENU -->
     <nav class="cb-menu" id="cbMenu">
         <ul>
-            <li id="navCurrentUserMobileWrap" style="display:none; padding:8px 0; color:#ffffff; font-weight:600;">
-                <span id="navCurrentUserMobile"></span>
+            {% if current_user.is_authenticated %}
+            <li style="display:block; padding:8px 0; color:#ffffff; font-weight:600;">
+                <span>{{ current_user.display_name }}</span>
             </li>
-            <li><a href="/">Home</a></li>
+            {% endif %}
+            {% if current_user.is_authenticated and current_user.has_permission('dashboard_view') %}
+            <li><a href="{{ url_for('web.dashboard') }}"><span class="nav-link-icon"><span>Dashboard</span></span></a></li>
+            {% endif %}
+            {% if current_user.is_authenticated and current_user.has_permission('encode_view') %}
+            <li><a href="{{ url_for('billing.bill_list') }}"><span class="nav-link-icon"><span>Purchases</span></span></a></li>
+            {% endif %}
+            {% if current_user.is_authenticated %}
             <li>
-                <a href="#" id="btnLogoutMobile" class="text-danger" style="display:none;">
-                    Logout
+                <a href="{{ url_for('auth.logout') }}" class="text-danger" aria-label="Logout" title="Logout">
+                    <span class="nav-link-icon"><span>Logout</span></span>
                 </a>
             </li>
+            {% endif %}
         </ul>
     </nav>
 
@@ -106,80 +226,6 @@
         }
     });
     </script>
-
-    <!-- LOGOUT + TOKEN CHECK -->
-    <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const btnLogout = document.getElementById("btnLogout");
-        const btnLogoutMobile = document.getElementById("btnLogoutMobile");
-        const navCurrentUser = document.getElementById("navCurrentUser");
-        const navCurrentUserMobile = document.getElementById("navCurrentUserMobile");
-        const navCurrentUserMobileWrap = document.getElementById("navCurrentUserMobileWrap");
-
-        // Adjust if you standardize on one key
-        const token =
-            localStorage.getItem("access_token") ||
-            sessionStorage.getItem("access_token") ||
-            localStorage.getItem("token") ||
-            sessionStorage.getItem("token");
-
-        function parseTokenClaims(rawToken) {
-            try {
-                const payload = rawToken.split(".")[1];
-                if (!payload) return null;
-                const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
-                return JSON.parse(decoded);
-            } catch (err) {
-                return null;
-            }
-        }
-
-        // Show logout buttons only when token exists
-        if (token) {
-            if (btnLogout) btnLogout.style.display = "";
-            if (btnLogoutMobile) btnLogoutMobile.style.display = "";
-
-            const claims = parseTokenClaims(token);
-            const displayName = claims?.name || claims?.email || null;
-
-            if (displayName) {
-                if (navCurrentUser) {
-                    navCurrentUser.textContent = displayName;
-                    navCurrentUser.style.display = "";
-                }
-                if (navCurrentUserMobile && navCurrentUserMobileWrap) {
-                    navCurrentUserMobile.textContent = displayName;
-                    navCurrentUserMobileWrap.style.display = "";
-                }
-            }
-        }
-
-        function logout(e) {
-            if (e) e.preventDefault();
-            const logoutUrl = {{ AUTH_LOGOUT_URL|tojson }};
-
-            try {
-                localStorage.removeItem("access_token");
-                sessionStorage.removeItem("access_token");
-                localStorage.removeItem("token");
-                sessionStorage.removeItem("token");
-                localStorage.removeItem("me");
-                sessionStorage.removeItem("me");
-            } catch (err) {}
-
-            if (navCurrentUser) navCurrentUser.style.display = "none";
-            if (navCurrentUserMobileWrap) navCurrentUserMobileWrap.style.display = "none";
-
-            // Full logout: also clear CommonAuth session
-            const returnTo = encodeURIComponent(window.location.origin + "/");
-            window.location.href = `${logoutUrl}?next=${returnTo}`;
-        }
-
-        if (btnLogout) btnLogout.addEventListener("click", logout);
-        if (btnLogoutMobile) btnLogoutMobile.addEventListener("click", logout);
-    });
-    </script>
-
     {% block scripts %}{% endblock %}
 </body>
 </html>
